@@ -1,1 +1,103 @@
+# xndir 150
 
+# list=[]
+# def func(filename):
+#     with open(filename,'r') as text:
+#        text = text.read()
+#     list = text.split()
+#     return list
+# print(func('tnayin.txt'))
+
+
+
+
+# xndir 151
+
+# try:
+#     list=[]
+#     def func(filename1,filename2,filename3):
+#         with open(filename1,'r') as text:
+#            text = text.read()
+#         list = text.split()
+#         with open(filename2,'r') as text:
+#            text = text.read()
+#         list+= text.split()
+#         with open(filename3,'r') as text:
+#            text = text.read()
+#         list+= text.split()
+#         return list
+#     print(func('tnayin.txt','James.txt','Jame.txt'))
+# except FileNotFoundError:
+#     print('File chi gtnver')
+# except TypeError:
+#     print('Nermucman sxal')
+
+
+
+
+# xndir 152
+
+# list=[]
+# def func(filename):
+#     x = ''
+#     with open(filename,'r') as text:
+#        text = text.read()
+#     list = text.split()
+#     for i in range(len(list)):
+#         list[i] = str(i+1)+':'+list[i]
+#     with open(filename,'w') as text:
+#         text.write('\n'.join(list))
+#     x = '\n'.join(list)
+#     return x
+# print(func('tnayin.txt'))
+
+
+
+
+# xndir 156
+
+# Esi luchumy chi
+# Esi grdoni var orinak a
+# count = 0
+# while True:
+#     x = input('Enter number: ')
+#     if x == '':
+#         print(count)
+#         break
+#     elif x.isalpha():
+#         print('Nermuceq amboxj tiv')
+#     else:
+#         count+=float(x)
+
+
+
+
+# xndir 158
+
+# list=[]
+# def func(filename):
+#     with open(filename,'r') as text:
+#        text = text.read()
+#     list = text.split()
+#     for i in range(len(list)):
+#         list[i] = list[i].replace('#','')
+#     return list
+# print(func('tnayin.txt'))
+
+
+
+
+# xndir 159
+
+# import random
+# x = random.randint(0,14)
+# y = random.randint(0,14)
+# list=[]
+# parol = ''
+# def func(filename):
+#     with open(filename,'r') as text:
+#        text = text.read()
+#     list = text.split()
+#     parol = list[x].title()+list[y].title()
+#     return parol
+# print(func('tnayin.txt'))
