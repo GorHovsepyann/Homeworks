@@ -1,103 +1,86 @@
-# xndir 150
+import telebot
+from telebot import types
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
 
-# list=[]
-# def func(filename):
-#     with open(filename,'r') as text:
-#        text = text.read()
-#     list = text.split()
-#     return list
-# print(func('tnayin.txt'))
+bot = telebot.TeleBot('6880733553:AAHOz1YRP9BSpVlX47hHBOEGJdlm5rjNWKU')
+driver = webdriver.Chrome()
 
+try:
 
+    user_states = {}
 
+    @bot.message_handler(commands=['start'])
+    def start(message):
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        rubli_button = types.InlineKeyboardButton('Rubli', callback_data='/rubli')
+        dollar_button = types.InlineKeyboardButton('Dollar', callback_data='/dollar')
+        markup.add(rubli_button, dollar_button)
+        bot.send_message(message.chat.id, "Hello! What do you want to find?", reply_markup=markup)
 
-# xndir 151
+    @bot.message_handler(commands=['help'])
+    def help(message):
+        markup = types.InlineKeyboardMarkup(row_width=2)
+        rubli_button = types.InlineKeyboardButton('Rubli', callback_data='/rubli')
+        dollar_button = types.InlineKeyboardButton('Dollar', callback_data='/dollar')
+        markup.add(rubli_button, dollar_button)
+        bot.send_message(message.chat.id, "This bot helps you find information about the price of the item."
+                                        "To get started, select 'rubli' or 'dollar'.", reply_markup=markup)
 
-# try:
-#     list=[]
-#     def func(filename1,filename2,filename3):
-#         with open(filename1,'r') as text:
-#            text = text.read()
-#         list = text.split()
-#         with open(filename2,'r') as text:
-#            text = text.read()
-#         list+= text.split()
-#         with open(filename3,'r') as text:
-#            text = text.read()
-#         list+= text.split()
-#         return list
-#     print(func('tnayin.txt','James.txt','Jame.txt'))
-# except FileNotFoundError:
-#     print('File chi gtnver')
-# except TypeError:
-#     print('Nermucman sxal')
+    @bot.callback_query_handler(func=lambda call: True)
+    def handle_buttons(call):
+        chat_id = call.message.chat.id
+        user_text = call.data.lower()
+        if user_text in ['/rubli']:
+            bot.send_message(chat_id, "Hello! I will help you find information about rubles. How many rubles you want to change ?",reply_markup=types.ReplyKeyboardRemove())
+            user_states[chat_id] = 'waiting_for_rubli_name'
+        elif user_text in ['/dollar']:
+            bot.send_message(chat_id, "Hello! I will help you find information about dollar. How many dollar you want to change ?",reply_markup=types.ReplyKeyboardRemove())
+            user_states[chat_id] = 'waiting_for_dollar_name'     
+        else:
+            bot.send_message(chat_id, "I don't understand this command. Please use the buttons.")
 
+    @bot.message_handler(func=lambda message: user_states.get(message.chat.id) == 'waiting_for_rubli_name')
+    def get_rubli_name(message):
+        rubli_name = 0  
+        chat_id = message.chat.id
+        rubli_name = message.text
+        user_states[chat_id] = None
+        if rubli_name.isdigit():
+            driver.get(url='https://www.xe.com/currencyconverter/convert/?Amount=1&From=RUB&To=AMD')
+            driver.find_element(By.CSS_SELECTOR,'#__next > div:nth-child(3) > div.fluid-container__BaseFluidContainer-sc-qoidzu-0.cXGelU > section > div:nth-child(2) > div > main > div > div.currency-converter__GridContainer-sc-zieln1-0.fEnvlO > div.text-input__TextInput-sc-17mujrb-0.amount-input__Wrapper-sc-1gq6pic-0.jhKmtU.kgZlMq').click() 
+            driver.find_element(By.CSS_SELECTOR,'#amount').send_keys(rubli_name)
+            time.sleep(3)   
+            rub = driver.find_element(By.CSS_SELECTOR,'#__next > div:nth-child(3) > div.fluid-container__BaseFluidContainer-sc-qoidzu-0.cXGelU > section > div:nth-child(2) > div > main > div > div:nth-child(2) > div:nth-child(1) > p.result__BigRate-sc-1bsijpp-1.dPdXSB')
+            bot.send_message(chat_id,f'{rubli_name} Russian Rubles = {rub.text}')
+        else:
+            bot.send_message(chat_id,'write the amount')
+            return start(message)
 
-
-
-# xndir 152
-
-# list=[]
-# def func(filename):
-#     x = ''
-#     with open(filename,'r') as text:
-#        text = text.read()
-#     list = text.split()
-#     for i in range(len(list)):
-#         list[i] = str(i+1)+':'+list[i]
-#     with open(filename,'w') as text:
-#         text.write('\n'.join(list))
-#     x = '\n'.join(list)
-#     return x
-# print(func('tnayin.txt'))
-
-
-
-
-# xndir 156
-
-# Esi luchumy chi
-# Esi grdoni var orinak a
-# count = 0
-# while True:
-#     x = input('Enter number: ')
-#     if x == '':
-#         print(count)
-#         break
-#     elif x.isalpha():
-#         print('Nermuceq amboxj tiv')
-#     else:
-#         count+=float(x)
+        
 
 
+    @bot.message_handler(func=lambda message: user_states.get(message.chat.id) == 'waiting_for_dollar_name')
+    def get_dollar_name(message):
+        dollar_name = 0
+        chat_id = message.chat.id
+        dollar_name = message.text
+        user_states[chat_id] = None
+        if dollar_name.isdigit():
+            driver.get(url='https://www.xe.com/currencyconverter/convert/?Amount=1&From=USD&To=AMD')   
+            driver.find_element(By.CSS_SELECTOR,'#__next > div:nth-child(3) > div.fluid-container__BaseFluidContainer-sc-qoidzu-0.cXGelU > section > div:nth-child(2) > div > main > div > div.currency-converter__GridContainer-sc-zieln1-0.fEnvlO > div.text-input__TextInput-sc-17mujrb-0.amount-input__Wrapper-sc-1gq6pic-0.jhKmtU.kgZlMq').click() 
+            driver.find_element(By.CSS_SELECTOR,'#amount').send_keys(dollar_name)
+            time.sleep(3)   
+            dol = driver.find_element(By.CSS_SELECTOR,'#__next > div:nth-child(3) > div.fluid-container__BaseFluidContainer-sc-qoidzu-0.cXGelU > section > div:nth-child(2) > div > main > div > div:nth-child(2) > div:nth-child(1) > p.result__BigRate-sc-1bsijpp-1.dPdXSB')
+            bot.send_message(chat_id,f'{dollar_name} US Dollar = {dol.text}')
+        else:
+            bot.send_message(chat_id,'write the amount')
+            return start(message)
 
-
-# xndir 158
-
-# list=[]
-# def func(filename):
-#     with open(filename,'r') as text:
-#        text = text.read()
-#     list = text.split()
-#     for i in range(len(list)):
-#         list[i] = list[i].replace('#','')
-#     return list
-# print(func('tnayin.txt'))
-
-
-
-
-# xndir 159
-
-# import random
-# x = random.randint(0,14)
-# y = random.randint(0,14)
-# list=[]
-# parol = ''
-# def func(filename):
-#     with open(filename,'r') as text:
-#        text = text.read()
-#     list = text.split()
-#     parol = list[x].title()+list[y].title()
-#     return parol
-# print(func('tnayin.txt'))
+    bot.polling()
+except Exception as ex:
+    print(ex.__class__.__name__)
+finally:
+    driver.close()
+    driver.quit()
